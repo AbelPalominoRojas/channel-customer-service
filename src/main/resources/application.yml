@@ -1,0 +1,10 @@
+quarkus:
+  http:
+    root-path: /customer-service/v1
+    port: 8082
+
+
+  rest-client:
+    business-party-reference:
+      url: http://localhost:8081/api/v1
+      scope: jakarta.enterprise.context.ApplicationScoped
