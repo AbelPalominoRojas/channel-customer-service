@@ -12,24 +12,11 @@ import static org.ironman.customer.application.util.AppUtils.findDateByType;
 import static org.ironman.customer.application.util.AppUtils.findNameByType;
 
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import org.ironman.customer.application.integration.partyreference.model.*;
-import org.ironman.customer.application.model.api.CreateCustomerRequest;
-import org.ironman.customer.application.model.api.CustomerIdResponse;
-import org.ironman.customer.application.model.api.CustomerListResponse;
-import org.ironman.customer.application.model.api.CustomerResponse;
-import org.ironman.customer.application.model.api.CustomerSummary;
-import org.ironman.customer.application.model.api.CustomerTypeValues;
-import org.ironman.customer.application.model.api.DocumentTypeValues;
-import org.ironman.customer.application.model.api.PaginationUx;
-import org.ironman.customer.application.model.api.ResidencyStatusValues;
+import org.ironman.customer.application.model.api.*;
 import org.ironman.customer.application.util.AppUtils;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.JAKARTA_CDI)
 public interface CustomerMapper {
@@ -37,8 +24,7 @@ public interface CustomerMapper {
   @Mapping(target = "customerId", source = "partyReference.partyId")
   @Mapping(
       target = "documentType",
-      source = "partyReference.partyIdentification.partyIdentificationType",
-      qualifiedByName = "mapDocumentType")
+      source = "partyReference.partyIdentification.partyIdentificationType")
   @Mapping(
       target = "documentNumber",
       source = "partyReference.partyIdentification.partyIdentification.identifierValue")
@@ -46,18 +32,14 @@ public interface CustomerMapper {
   @Mapping(target = "paternalSurname", ignore = true)
   @Mapping(target = "maternalSurname", ignore = true)
   @Mapping(target = "tradeName", ignore = true)
-  @Mapping(target = "customerType", source = "partyType", qualifiedByName = "mapCustomerType")
-  @Mapping(
-      target = "residencyStatus",
-      source = "residencyStatus",
-      qualifiedByName = "mapResidencyStatus")
+  @Mapping(target = "customerType", source = "partyType")
+  @Mapping(target = "residencyStatus", source = "residencyStatus")
   CustomerResponse toResponse(RetrievePartyReferenceDataDirectoryEntryResponse response);
 
   @Mapping(target = "customerId", source = "partyReference.partyId")
   @Mapping(
       target = "documentType",
-      source = "partyReference.partyIdentification.partyIdentificationType",
-      qualifiedByName = "mapDocumentType")
+      source = "partyReference.partyIdentification.partyIdentificationType")
   @Mapping(
       target = "documentNumber",
       source = "partyReference.partyIdentification.partyIdentification.identifierValue")
@@ -65,11 +47,8 @@ public interface CustomerMapper {
   @Mapping(target = "paternalSurname", ignore = true)
   @Mapping(target = "maternalSurname", ignore = true)
   @Mapping(target = "tradeName", ignore = true)
-  @Mapping(target = "customerType", source = "partyType", qualifiedByName = "mapCustomerType")
-  @Mapping(
-      target = "residencyStatus",
-      source = "residencyStatus",
-      qualifiedByName = "mapResidencyStatus")
+  @Mapping(target = "customerType", source = "partyType")
+  @Mapping(target = "residencyStatus", source = "residencyStatus")
   CustomerSummary toSummary(PartyReferenceDataDirectoryEntry entry);
 
   PaginationUx toPaginationUx(Pagination pagination);
@@ -86,29 +65,64 @@ public interface CustomerMapper {
       return null;
     }
 
-    var partyType =
-        Optional.ofNullable(request.getCustomerType())
-            .map(AppUtils::mapToPartyTypeValue)
-            .orElse(null);
-
-    var residencyStatus =
-        Optional.ofNullable(request.getResidencyStatus())
-            .map(AppUtils::mapToResidencyStatusTypeValue)
-            .orElse(null);
-
-    var identificationType =
-        Optional.ofNullable(request.getDocumentType())
-            .map(AppUtils::mapToPartyIdentificationTypeValue)
-            .orElse(null);
+    var partyType = AppUtils.mapToPartyTypeValue(request.getCustomerType());
+    var residencyStatus = AppUtils.mapToResidencyStatusTypeValue(request.getResidencyStatus());
+    var identificationType = AppUtils.mapToPartyIdentificationTypeValue(request.getDocumentType());
 
     var identifier = new Identifier(request.getDocumentNumber());
     var partyIdentification = new PartyIdentification(identificationType, identifier);
+    var partyReference =
+        new PartyReference(partyIdentification, buildPartyNames(request, partyType));
 
+    return new RegisterPartyReferenceDataDirectoryEntryRequest(
+        partyReference, partyType, residencyStatus);
+  }
+
+  @AfterMapping
+  default void populateCustomerFields(
+      RetrievePartyReferenceDataDirectoryEntryResponse source,
+      @MappingTarget CustomerResponse customer) {
+    var partyReference = source.getPartyReference();
+    if (partyReference != null) {
+      var partyNames = partyReference.getPartyNames();
+      if (partyNames != null) {
+        boolean isPerson = PERSONA == source.getPartyType();
+        customer.setName(findNameByType(partyNames, isPerson ? NOMBRE : RAZON_SOCIAL));
+        customer.setPaternalSurname(findNameByType(partyNames, APELLIDO_PATERNO));
+        customer.setMaternalSurname(findNameByType(partyNames, APELLIDO_MATERNO));
+        customer.setTradeName(findNameByType(partyNames, NOMBRE_FANTASIA));
+      }
+    }
+
+    var directoryEntryDates = source.getDirectoryEntryDates();
+    if (directoryEntryDates != null) {
+      customer.setCreatedAt(findDateByType(directoryEntryDates, FECHA_CREACION));
+      customer.setUpdatedAt(findDateByType(directoryEntryDates, FECHA_MODIFICACION));
+    }
+  }
+
+  @AfterMapping
+  default void populateSummaryFields(
+      PartyReferenceDataDirectoryEntry entry, @MappingTarget CustomerSummary summary) {
+    var partyReference = entry.getPartyReference();
+    if (partyReference != null) {
+      var partyNames = partyReference.getPartyNames();
+      if (partyNames != null) {
+        boolean isPerson = PERSONA == entry.getPartyType();
+        summary.setName(findNameByType(partyNames, isPerson ? NOMBRE : RAZON_SOCIAL));
+        summary.setPaternalSurname(findNameByType(partyNames, APELLIDO_PATERNO));
+        summary.setMaternalSurname(findNameByType(partyNames, APELLIDO_MATERNO));
+        summary.setTradeName(findNameByType(partyNames, NOMBRE_FANTASIA));
+      }
+    }
+  }
+
+  private List<PartyName> buildPartyNames(
+      CreateCustomerRequest request, PartyTypeValues partyType) {
     boolean isPerson = PERSONA == partyType;
     var partyNames = new ArrayList<PartyName>();
 
-    var mainNameType = isPerson ? NOMBRE : RAZON_SOCIAL;
-    partyNames.add(new PartyName(mainNameType, request.getName()));
+    partyNames.add(new PartyName(isPerson ? NOMBRE : RAZON_SOCIAL, request.getName()));
 
     if (isPerson) {
       if (request.getPaternalSurname() != null) {
@@ -123,80 +137,18 @@ public interface CustomerMapper {
       }
     }
 
-    var partyReference = new PartyReference(partyIdentification, partyNames);
-
-    return new RegisterPartyReferenceDataDirectoryEntryRequest(
-        partyReference, partyType, residencyStatus);
+    return partyNames;
   }
 
-  @Named("mapDocumentType")
-  default DocumentTypeValues mapDocumentType(PartyIdentificationTypeValues identificationType) {
-    return Optional.ofNullable(identificationType)
-        .map(AppUtils::mapToDocumentTypeValue)
-        .orElse(null);
+  default DocumentTypeValues toDocumentTypeValues(PartyIdentificationTypeValues type) {
+    return AppUtils.mapToDocumentTypeValue(type);
   }
 
-  @Named("mapCustomerType")
-  default CustomerTypeValues mapCustomerType(PartyTypeValues partyType) {
-    return Optional.ofNullable(partyType).map(AppUtils::mapToCustomerTypeValue).orElse(null);
+  default CustomerTypeValues toCustomerTypeValues(PartyTypeValues type) {
+    return AppUtils.mapToCustomerTypeValue(type);
   }
 
-  @Named("mapResidencyStatus")
-  default ResidencyStatusValues mapResidencyStatus(ResidencyStatusTypeValues residencyStatus) {
-    return Optional.ofNullable(residencyStatus)
-        .map(AppUtils::mapToResidencyStatusValue)
-        .orElse(null);
-  }
-
-  @AfterMapping
-  default void populateCustomerFields(
-      RetrievePartyReferenceDataDirectoryEntryResponse partyReferenceResponse,
-      @MappingTarget CustomerResponse customer) {
-    if (partyReferenceResponse == null || customer == null) {
-      return;
-    }
-
-    var partyReference = partyReferenceResponse.getPartyReference();
-    if (partyReference != null) {
-
-      var partyNames = partyReference.getPartyNames();
-      if (partyNames != null) {
-        boolean isPerson = PERSONA == partyReferenceResponse.getPartyType();
-        PartyNameTypeValues nameType = isPerson ? NOMBRE : RAZON_SOCIAL;
-        customer.setName(findNameByType(partyNames, nameType));
-
-        customer.setPaternalSurname(findNameByType(partyNames, APELLIDO_PATERNO));
-        customer.setMaternalSurname(findNameByType(partyNames, APELLIDO_MATERNO));
-        customer.setTradeName(findNameByType(partyNames, NOMBRE_FANTASIA));
-      }
-    }
-
-    var directoryEntryDates = partyReferenceResponse.getDirectoryEntryDates();
-    if (directoryEntryDates != null) {
-      customer.setCreatedAt(findDateByType(directoryEntryDates, FECHA_CREACION));
-      customer.setUpdatedAt(findDateByType(directoryEntryDates, FECHA_MODIFICACION));
-    }
-  }
-
-  @AfterMapping
-  default void populateSummaryFields(
-      PartyReferenceDataDirectoryEntry entry, @MappingTarget CustomerSummary summary) {
-    if (entry == null || summary == null) {
-      return;
-    }
-
-    var partyReference = entry.getPartyReference();
-    if (partyReference != null) {
-      var partyNames = partyReference.getPartyNames();
-      if (partyNames != null) {
-        boolean isPerson = PERSONA == entry.getPartyType();
-        PartyNameTypeValues nameType = isPerson ? NOMBRE : RAZON_SOCIAL;
-        summary.setName(findNameByType(partyNames, nameType));
-
-        summary.setPaternalSurname(findNameByType(partyNames, APELLIDO_PATERNO));
-        summary.setMaternalSurname(findNameByType(partyNames, APELLIDO_MATERNO));
-        summary.setTradeName(findNameByType(partyNames, NOMBRE_FANTASIA));
-      }
-    }
+  default ResidencyStatusValues toResidencyStatusValues(ResidencyStatusTypeValues status) {
+    return AppUtils.mapToResidencyStatusValue(status);
   }
 }
