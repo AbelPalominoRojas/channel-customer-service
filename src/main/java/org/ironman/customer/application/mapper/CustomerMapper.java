@@ -8,15 +8,25 @@ import static org.ironman.customer.application.integration.partyreference.model.
 import static org.ironman.customer.application.integration.partyreference.model.PartyNameTypeValues.NOMBRE_FANTASIA;
 import static org.ironman.customer.application.integration.partyreference.model.PartyNameTypeValues.RAZON_SOCIAL;
 import static org.ironman.customer.application.integration.partyreference.model.PartyTypeValues.PERSONA;
-import static org.ironman.customer.application.util.AppUtils.findDateByType;
-import static org.ironman.customer.application.util.AppUtils.findNameByType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironman.customer.application.integration.partyreference.model.*;
-import org.ironman.customer.application.model.api.*;
-import org.ironman.customer.application.util.AppUtils;
-import org.mapstruct.*;
+import org.ironman.customer.application.model.api.CreateCustomerRequest;
+import org.ironman.customer.application.model.api.CustomerIdResponse;
+import org.ironman.customer.application.model.api.CustomerListResponse;
+import org.ironman.customer.application.model.api.CustomerResponse;
+import org.ironman.customer.application.model.api.CustomerSummary;
+import org.ironman.customer.application.model.api.CustomerTypeValues;
+import org.ironman.customer.application.model.api.DocumentTypeValues;
+import org.ironman.customer.application.model.api.PaginationUx;
+import org.ironman.customer.application.model.api.ResidencyStatusValues;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.JAKARTA_CDI)
 public interface CustomerMapper {
@@ -65,9 +75,10 @@ public interface CustomerMapper {
       return null;
     }
 
-    var partyType = AppUtils.mapToPartyTypeValue(request.getCustomerType());
-    var residencyStatus = AppUtils.mapToResidencyStatusTypeValue(request.getResidencyStatus());
-    var identificationType = AppUtils.mapToPartyIdentificationTypeValue(request.getDocumentType());
+    var partyType = EnumConverter.mapToPartyTypeValue(request.getCustomerType());
+    var residencyStatus = EnumConverter.mapToResidencyStatusTypeValue(request.getResidencyStatus());
+    var identificationType =
+        EnumConverter.mapToPartyIdentificationTypeValue(request.getDocumentType());
 
     var identifier = new Identifier(request.getDocumentNumber());
     var partyIdentification = new PartyIdentification(identificationType, identifier);
@@ -117,6 +128,18 @@ public interface CustomerMapper {
     }
   }
 
+  default DocumentTypeValues toDocumentTypeValues(PartyIdentificationTypeValues type) {
+    return EnumConverter.mapToDocumentTypeValue(type);
+  }
+
+  default CustomerTypeValues toCustomerTypeValues(PartyTypeValues type) {
+    return EnumConverter.mapToCustomerTypeValue(type);
+  }
+
+  default ResidencyStatusValues toResidencyStatusValues(ResidencyStatusTypeValues status) {
+    return EnumConverter.mapToResidencyStatusValue(status);
+  }
+
   private List<PartyName> buildPartyNames(
       CreateCustomerRequest request, PartyTypeValues partyType) {
     boolean isPerson = PERSONA == partyType;
@@ -140,15 +163,22 @@ public interface CustomerMapper {
     return partyNames;
   }
 
-  default DocumentTypeValues toDocumentTypeValues(PartyIdentificationTypeValues type) {
-    return AppUtils.mapToDocumentTypeValue(type);
+  private static String findNameByType(
+      List<PartyName> partyNames, PartyNameTypeValues partyNameType) {
+    return partyNames.stream()
+        .filter(name -> name.getPartyNameType() == partyNameType)
+        .findFirst()
+        .map(PartyName::getPartyName)
+        .orElse(null);
   }
 
-  default CustomerTypeValues toCustomerTypeValues(PartyTypeValues type) {
-    return AppUtils.mapToCustomerTypeValue(type);
-  }
-
-  default ResidencyStatusValues toResidencyStatusValues(ResidencyStatusTypeValues status) {
-    return AppUtils.mapToResidencyStatusValue(status);
+  private static LocalDateTime findDateByType(
+      List<DirectoryEntryDate> directoryEntryDates,
+      DirectoryEntryDateTypeValues directoryEntryDateType) {
+    return directoryEntryDates.stream()
+        .filter(date -> date.getDirectoryEntryDateType() == directoryEntryDateType)
+        .findFirst()
+        .map(DirectoryEntryDate::getDirectoryEntryDate)
+        .orElse(null);
   }
 }

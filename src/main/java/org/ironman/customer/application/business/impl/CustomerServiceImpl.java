@@ -7,8 +7,8 @@ import org.ironman.customer.application.business.CustomerService;
 import org.ironman.customer.application.integration.partyreference.PartyReferenceClient;
 import org.ironman.customer.application.integration.partyreference.model.PartyReferenceFilter;
 import org.ironman.customer.application.mapper.CustomerMapper;
+import org.ironman.customer.application.mapper.EnumConverter;
 import org.ironman.customer.application.model.api.*;
-import org.ironman.customer.application.util.AppUtils;
 
 @RequiredArgsConstructor
 @ApplicationScoped
@@ -32,16 +32,16 @@ public class CustomerServiceImpl implements CustomerService {
             filter.pageSize(),
             filter.identifierValue(),
             Optional.ofNullable(filter.customerType())
-                .map(AppUtils::mapToPartyTypeValue)
+                .map(EnumConverter::mapToPartyTypeValue)
                 .orElse(null),
             Optional.ofNullable(filter.residencyStatus())
-                .map(AppUtils::mapToResidencyStatusTypeValue)
+                .map(EnumConverter::mapToResidencyStatusTypeValue)
                 .orElse(null),
             Optional.ofNullable(filter.sortField())
-                .map(AppUtils::mapToPartyReferenceSortFieldValue)
+                .map(EnumConverter::mapToPartyReferenceSortFieldValue)
                 .orElse(null),
             Optional.ofNullable(filter.sortDirection())
-                .map(AppUtils::mapToSortDirectionValue)
+                .map(EnumConverter::mapToSortDirectionValue)
                 .orElse(null));
 
     var result = partyReferenceClient.retrievePartyReferenceDataDirectoryEntries(partyFilter);

@@ -1,15 +1,9 @@
-package org.ironman.customer.application.util;
+package org.ironman.customer.application.mapper;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.ironman.customer.application.integration.partyreference.model.DirectoryEntryDate;
-import org.ironman.customer.application.integration.partyreference.model.DirectoryEntryDateTypeValues;
 import org.ironman.customer.application.integration.partyreference.model.PartyIdentificationTypeValues;
-import org.ironman.customer.application.integration.partyreference.model.PartyName;
-import org.ironman.customer.application.integration.partyreference.model.PartyNameTypeValues;
 import org.ironman.customer.application.integration.partyreference.model.PartyReferenceSortFieldValues;
 import org.ironman.customer.application.integration.partyreference.model.PartyTypeValues;
 import org.ironman.customer.application.integration.partyreference.model.ResidencyStatusTypeValues;
@@ -21,61 +15,34 @@ import org.ironman.customer.application.model.api.ResidencyStatusValues;
 import org.ironman.customer.application.model.api.SortDirectionUxValues;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AppUtils {
-
-  public static String findNameByType(
-      List<PartyName> partyNames, PartyNameTypeValues partyNameType) {
-    if (partyNames == null || partyNameType == null) {
-      return null;
-    }
-
-    return partyNames.stream()
-        .filter(name -> name.getPartyNameType() == partyNameType)
-        .findFirst()
-        .map(PartyName::getPartyName)
-        .orElse(null);
-  }
-
-  public static LocalDateTime findDateByType(
-      List<DirectoryEntryDate> directoryEntryDates,
-      DirectoryEntryDateTypeValues directoryEntryDateType) {
-    if (directoryEntryDates == null || directoryEntryDateType == null) {
-      return null;
-    }
-
-    return directoryEntryDates.stream()
-        .filter(date -> date.getDirectoryEntryDateType() == directoryEntryDateType)
-        .findFirst()
-        .map(DirectoryEntryDate::getDirectoryEntryDate)
-        .orElse(null);
-  }
+public class EnumConverter {
 
   public static DocumentTypeValues mapToDocumentTypeValue(
       PartyIdentificationTypeValues partyIdentificationType) {
-    return mapEnumByToStringIgnoreCase(partyIdentificationType, DocumentTypeValues.values());
+    return mapEnumByNameIgnoreCase(partyIdentificationType, DocumentTypeValues.values());
   }
 
   public static CustomerTypeValues mapToCustomerTypeValue(PartyTypeValues partyType) {
-    return mapEnumByToStringIgnoreCase(partyType, CustomerTypeValues.values());
+    return mapEnumByNameIgnoreCase(partyType, CustomerTypeValues.values());
   }
 
   public static ResidencyStatusValues mapToResidencyStatusValue(
       ResidencyStatusTypeValues residencyStatus) {
-    return mapEnumByToStringIgnoreCase(residencyStatus, ResidencyStatusValues.values());
+    return mapEnumByNameIgnoreCase(residencyStatus, ResidencyStatusValues.values());
   }
 
   public static PartyIdentificationTypeValues mapToPartyIdentificationTypeValue(
       DocumentTypeValues documentType) {
-    return mapEnumByToStringIgnoreCase(documentType, PartyIdentificationTypeValues.values());
+    return mapEnumByNameIgnoreCase(documentType, PartyIdentificationTypeValues.values());
   }
 
   public static PartyTypeValues mapToPartyTypeValue(CustomerTypeValues customerType) {
-    return mapEnumByToStringIgnoreCase(customerType, PartyTypeValues.values());
+    return mapEnumByNameIgnoreCase(customerType, PartyTypeValues.values());
   }
 
   public static ResidencyStatusTypeValues mapToResidencyStatusTypeValue(
       ResidencyStatusValues residencyStatus) {
-    return mapEnumByToStringIgnoreCase(residencyStatus, ResidencyStatusTypeValues.values());
+    return mapEnumByNameIgnoreCase(residencyStatus, ResidencyStatusTypeValues.values());
   }
 
   public static PartyReferenceSortFieldValues mapToPartyReferenceSortFieldValue(
@@ -88,10 +55,10 @@ public class AppUtils {
   }
 
   public static SortDirectionValues mapToSortDirectionValue(SortDirectionUxValues sortDirection) {
-    return mapEnumByToStringIgnoreCase(sortDirection, SortDirectionValues.values());
+    return mapEnumByNameIgnoreCase(sortDirection, SortDirectionValues.values());
   }
 
-  private static <S extends Enum<S>, T extends Enum<T>> T mapEnumByToStringIgnoreCase(
+  private static <S extends Enum<S>, T extends Enum<T>> T mapEnumByNameIgnoreCase(
       S source, T[] candidates) {
     if (source == null || candidates == null) {
       return null;
