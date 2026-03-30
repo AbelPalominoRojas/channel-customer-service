@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "d29df436-4c20-4984-a476-dd3b4a81cbaa",
+		"name": "channel-customer-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/customers/{customerId} (Person)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers/:customerId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers",
+						":customerId"
+					],
+					"variable": [
+						{
+							"key": "customerId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers/{customerId} (Organization)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers/:customerId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers",
+						":customerId"
+					],
+					"variable": [
+						{
+							"key": "customerId",
+							"value": "80"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers/{customerId} (No Content)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers/:customerId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers",
+						":customerId"
+					],
+					"variable": [
+						{
+							"key": "customerId",
+							"value": "20000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers?customerType=Persona&identifierValue=9&pageNumber=1&pageSize=10&residencyStatus=Nacional&sortDirection=Descendente&sortField=documentNumber",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers"
+					],
+					"query": [
+						{
+							"key": "customerType",
+							"value": "Persona"
+						},
+						{
+							"key": "identifierValue",
+							"value": "9"
+						},
+						{
+							"key": "pageNumber",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						},
+						{
+							"key": "residencyStatus",
+							"value": "Nacional"
+						},
+						{
+							"key": "sortDirection",
+							"value": "Descendente"
+						},
+						{
+							"key": "sortField",
+							"value": "documentNumber"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers (Person)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"documentType\": \"DocumentoNacionalIdentidad\",\n  \"documentNumber\": \"34769823\",\n  \"name\": \"Julio\",\n  \"paternalSurname\": \"Ribeyro\",\n  \"maternalSurname\": \"Zúñiga\",\n  \"tradeName\": null,\n  \"customerType\": \"Persona\",\n  \"residencyStatus\": \"Nacional\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers (Organization)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"documentType\": \"RegistroUnicoContribuyente\",\n  \"documentNumber\": \"20603458797\",\n  \"name\": \"Oracle Systems Corporation\",\n  \"paternalSurname\": null,\n  \"maternalSurname\": null,\n  \"tradeName\": \"Oracle\",\n  \"customerType\": \"Organizacion\",\n  \"residencyStatus\": \"Extranjero\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers/{customerId} (Person)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"documentType\": \"DocumentoNacionalIdentidad\",\n  \"documentNumber\": \"34769823\",\n  \"name\": \"Julio Ramón\",\n  \"paternalSurname\": \"Ribeyro\",\n  \"maternalSurname\": \"Zúñiga\",\n  \"tradeName\": null,\n  \"customerType\": \"Persona\",\n  \"residencyStatus\": \"Nacional\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers/:customerId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers",
+						":customerId"
+					],
+					"variable": [
+						{
+							"key": "customerId",
+							"value": "20002"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/customers/{customerId} (Organization)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Request-ID",
+						"value": "86245e71-fd47-41ec-9136-b1bc261574dc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"documentType\": \"RegistroUnicoContribuyente\",\n  \"documentNumber\": \"20603458797\",\n  \"name\": \"Oracle Systems Corporation\",\n  \"paternalSurname\": null,\n  \"maternalSurname\": null,\n  \"tradeName\": \"Oracle Inc\",\n  \"customerType\": \"Organizacion\",\n  \"residencyStatus\": \"Extranjero\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/customer-service/v1/customers/:customerId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"customer-service",
+						"v1",
+						"customers",
+						":customerId"
+					],
+					"variable": [
+						{
+							"key": "customerId",
+							"value": "20003"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
