@@ -80,19 +80,11 @@ public class AppUtils {
 
   public static PartyReferenceSortFieldValues mapToPartyReferenceSortFieldValue(
       CustomerSortFieldValues sortField) {
-    if (sortField == null) {
-      return null;
-    }
-    switch (sortField) {
-      case DOCUMENT_NUMBER:
-        return PartyReferenceSortFieldValues.IDENTIFIER_VALUE;
-      case CUSTOMER_TYPE:
-        return PartyReferenceSortFieldValues.PARTY_TYPE;
-      case RESIDENCY_STATUS:
-        return PartyReferenceSortFieldValues.RESIDENCY_STATUS;
-      default:
-        return null;
-    }
+    return switch (sortField) {
+      case DOCUMENT_NUMBER -> PartyReferenceSortFieldValues.IDENTIFIER_VALUE;
+      case CUSTOMER_TYPE -> PartyReferenceSortFieldValues.PARTY_TYPE;
+      case RESIDENCY_STATUS -> PartyReferenceSortFieldValues.RESIDENCY_STATUS;
+    };
   }
 
   public static SortDirectionValues mapToSortDirectionValue(SortDirectionUxValues sortDirection) {

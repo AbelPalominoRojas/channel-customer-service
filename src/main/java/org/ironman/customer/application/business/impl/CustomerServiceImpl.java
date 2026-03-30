@@ -5,8 +5,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.ironman.customer.application.business.CustomerService;
 import org.ironman.customer.application.integration.partyreference.PartyReferenceClient;
+import org.ironman.customer.application.integration.partyreference.model.PartyReferenceFilter;
 import org.ironman.customer.application.mapper.CustomerMapper;
 import org.ironman.customer.application.model.api.*;
+import org.ironman.customer.application.model.api.CustomerFilter;
 import org.ironman.customer.application.util.AppUtils;
 
 @RequiredArgsConstructor
@@ -24,39 +26,27 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public CustomerListResponse getCustomers(
-      String requestId,
-      Integer pageNumber,
-      Integer pageSize,
-      String identifierValue,
-      CustomerTypeValues customerType,
-      ResidencyStatusValues residencyStatus,
-      CustomerSortFieldValues sortField,
-      SortDirectionUxValues sortDirection) {
-    var partyType =
-        Optional.ofNullable(customerType).map(AppUtils::mapToPartyTypeValue).orElse(null);
-    var residencyStatusType =
-        Optional.ofNullable(residencyStatus)
-            .map(AppUtils::mapToResidencyStatusTypeValue)
-            .orElse(null);
-    var partySortField =
-        Optional.ofNullable(sortField)
-            .map(AppUtils::mapToPartyReferenceSortFieldValue)
-            .orElse(null);
-    var sortDirectionType =
-        Optional.ofNullable(sortDirection).map(AppUtils::mapToSortDirectionValue).orElse(null);
+  public CustomerListResponse getCustomers(String requestId, CustomerFilter filter) {
+    var partyFilter =
+        new PartyReferenceFilter(
+            filter.pageNumber(),
+            filter.pageSize(),
+            filter.identifierValue(),
+            Optional.ofNullable(filter.customerType())
+                .map(AppUtils::mapToPartyTypeValue)
+                .orElse(null),
+            Optional.ofNullable(filter.residencyStatus())
+                .map(AppUtils::mapToResidencyStatusTypeValue)
+                .orElse(null),
+            Optional.ofNullable(filter.sortField())
+                .map(AppUtils::mapToPartyReferenceSortFieldValue)
+                .orElse(null),
+            Optional.ofNullable(filter.sortDirection())
+                .map(AppUtils::mapToSortDirectionValue)
+                .orElse(null));
 
     var result =
-        partyReferenceClient.retrievePartyReferenceDataDirectoryEntries(
-            requestId,
-            pageNumber,
-            pageSize,
-            identifierValue,
-            partyType,
-            residencyStatusType,
-            partySortField,
-            sortDirectionType);
-
+        partyReferenceClient.retrievePartyReferenceDataDirectoryEntries(requestId, partyFilter);
     return customerMapper.toListResponse(result);
   }
 

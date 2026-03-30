@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.ironman.customer.application.integration.partyreference.PartyReferenceClient;
 import org.ironman.customer.application.integration.partyreference.model.*;
+import org.ironman.customer.application.integration.partyreference.model.PartyReferenceFilter;
 import org.ironman.customer.application.integration.partyreference.restclient.PartyReferenceDataDirectoryProxy;
 
 @Slf4j
@@ -29,24 +30,16 @@ public class PartyReferenceClientImpl implements PartyReferenceClient {
 
   @Override
   public RetrievePartyReferenceDataDirectoryEntryListResponse
-      retrievePartyReferenceDataDirectoryEntries(
-          String requestId,
-          Integer pageNumber,
-          Integer pageSize,
-          String identifierValue,
-          PartyTypeValues partyType,
-          ResidencyStatusTypeValues residencyStatus,
-          PartyReferenceSortFieldValues sortField,
-          SortDirectionValues sortDirection) {
+      retrievePartyReferenceDataDirectoryEntries(String requestId, PartyReferenceFilter filter) {
     return partyReferenceDataDirectoryProxy.retrievePartyReferenceDataDirectoryEntries(
         requestId,
-        pageNumber,
-        pageSize,
-        identifierValue,
-        partyType,
-        residencyStatus,
-        sortField,
-        sortDirection);
+        filter.pageNumber(),
+        filter.pageSize(),
+        filter.identifierValue(),
+        filter.partyType(),
+        filter.residencyStatus(),
+        filter.sortField(),
+        filter.sortDirection());
   }
 
   @Override

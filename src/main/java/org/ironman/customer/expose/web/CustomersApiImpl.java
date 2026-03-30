@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.ironman.customer.application.business.CustomerService;
 import org.ironman.customer.application.model.api.*;
+import org.ironman.customer.application.model.api.CustomerFilter;
 
 @RequiredArgsConstructor
 @ApplicationScoped
@@ -39,9 +40,8 @@ public class CustomersApiImpl implements CustomersApi {
       ResidencyStatusValues residencyStatus,
       CustomerSortFieldValues sortField,
       SortDirectionUxValues sortDirection) {
-    var result =
-        customerService.getCustomers(
-            requestID,
+    var filter =
+        new CustomerFilter(
             pageNumber,
             pageSize,
             identifierValue,
@@ -49,6 +49,7 @@ public class CustomersApiImpl implements CustomersApi {
             residencyStatus,
             sortField,
             sortDirection);
+    var result = customerService.getCustomers(requestID, filter);
     return Response.ok().entity(result).build();
   }
 

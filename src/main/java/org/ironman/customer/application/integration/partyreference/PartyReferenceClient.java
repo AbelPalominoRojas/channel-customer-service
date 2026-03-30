@@ -9,17 +9,10 @@ public interface PartyReferenceClient {
           String requestId, Long partyReferenceDataDirectoryEntryId);
 
   RetrievePartyReferenceDataDirectoryEntryListResponse retrievePartyReferenceDataDirectoryEntries(
-      String requestId,
-      Integer pageNumber,
-      Integer pageSize,
-      String identifierValue,
-      PartyTypeValues partyType,
-      ResidencyStatusTypeValues residencyStatus,
-      PartyReferenceSortFieldValues sortField,
-      SortDirectionValues sortDirection);
+      String requestId, PartyReferenceFilter filter);
 
   RegisterPartyReferenceDataDirectoryEntryResponse registerPartyReferenceDataDirectoryEntry(
-      String requestId, RegisterPartyReferenceDataDirectoryEntryRequest Request);
+      String requestId, RegisterPartyReferenceDataDirectoryEntryRequest request);
 
   RegisterPartyReferenceDataDirectoryEntryResponse updatePartyReferenceDataDirectoryEntry(
       String requestId,

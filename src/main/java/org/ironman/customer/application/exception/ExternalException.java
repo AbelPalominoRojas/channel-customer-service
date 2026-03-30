@@ -4,7 +4,6 @@ import lombok.*;
 import org.ironman.customer.application.model.api.ApiExceptionResponse;
 
 @Builder
-@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
