@@ -6,13 +6,14 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
-import org.ironman.customer.application.exception.ExternalException;
+import org.ironman.customer.application.exception.IntegrationException;
 import org.ironman.customer.application.model.api.ApiExceptionResponse;
 
 @Slf4j
 @Provider
 @Priority(Priorities.USER)
-public class ClientExceptionResponseMapper implements ResponseExceptionMapper<ExternalException> {
+public class IntegrationResponseExceptionMapper
+    implements ResponseExceptionMapper<IntegrationException> {
 
   private static final int INTERNAL_SERVER_ERROR = 500;
   private static final String TECHNICAL_ERROR_TYPE = "TECHNICAL";
@@ -20,11 +21,14 @@ public class ClientExceptionResponseMapper implements ResponseExceptionMapper<Ex
       "External service returned an unexpected error payload";
 
   @Override
-  public ExternalException toThrowable(Response response) {
+  public IntegrationException toThrowable(Response response) {
     int httpStatus = resolveStatus(response);
     ApiExceptionResponse errorResponse = extractErrorResponse(response);
 
-    return ExternalException.builder().httpStatus(httpStatus).errorResponse(errorResponse).build();
+    return IntegrationException.builder()
+        .httpStatus(httpStatus)
+        .errorResponse(errorResponse)
+        .build();
   }
 
   private int resolveStatus(Response response) {

@@ -7,7 +7,7 @@ import org.ironman.customer.application.model.api.ApiExceptionResponse;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExternalException extends RuntimeException {
+public class IntegrationException extends RuntimeException {
   private int httpStatus;
   private ApiExceptionResponse errorResponse;
 }
