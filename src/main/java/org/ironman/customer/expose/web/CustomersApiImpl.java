@@ -14,7 +14,8 @@ public class CustomersApiImpl implements CustomersApi {
 
   @Override
   public Response createCustomer(String requestID, CreateCustomerRequest createCustomerRequest) {
-    return null;
+    var result = customerService.createCustomer(requestID, createCustomerRequest);
+    return Response.status(Response.Status.CREATED).entity(result).build();
   }
 
   @Override
@@ -38,12 +39,23 @@ public class CustomersApiImpl implements CustomersApi {
       ResidencyStatusValues residencyStatus,
       CustomerSortFieldValues sortField,
       SortDirectionUxValues sortDirection) {
-    return null;
+    var result =
+        customerService.getCustomers(
+            requestID,
+            pageNumber,
+            pageSize,
+            identifierValue,
+            customerType,
+            residencyStatus,
+            sortField,
+            sortDirection);
+    return Response.ok().entity(result).build();
   }
 
   @Override
   public Response updateCustomer(
       String requestID, Long customerId, CreateCustomerRequest createCustomerRequest) {
-    return null;
+    var result = customerService.updateCustomer(requestID, customerId, createCustomerRequest);
+    return Response.ok().entity(result).build();
   }
 }

@@ -10,11 +10,15 @@ import org.ironman.customer.application.integration.partyreference.model.Directo
 import org.ironman.customer.application.integration.partyreference.model.PartyIdentificationTypeValues;
 import org.ironman.customer.application.integration.partyreference.model.PartyName;
 import org.ironman.customer.application.integration.partyreference.model.PartyNameTypeValues;
+import org.ironman.customer.application.integration.partyreference.model.PartyReferenceSortFieldValues;
 import org.ironman.customer.application.integration.partyreference.model.PartyTypeValues;
 import org.ironman.customer.application.integration.partyreference.model.ResidencyStatusTypeValues;
+import org.ironman.customer.application.integration.partyreference.model.SortDirectionValues;
+import org.ironman.customer.application.model.api.CustomerSortFieldValues;
 import org.ironman.customer.application.model.api.CustomerTypeValues;
 import org.ironman.customer.application.model.api.DocumentTypeValues;
 import org.ironman.customer.application.model.api.ResidencyStatusValues;
+import org.ironman.customer.application.model.api.SortDirectionUxValues;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AppUtils {
@@ -58,6 +62,41 @@ public class AppUtils {
   public static ResidencyStatusValues mapToResidencyStatusValue(
       ResidencyStatusTypeValues residencyStatus) {
     return mapEnumByToStringIgnoreCase(residencyStatus, ResidencyStatusValues.values());
+  }
+
+  public static PartyIdentificationTypeValues mapToPartyIdentificationTypeValue(
+      DocumentTypeValues documentType) {
+    return mapEnumByToStringIgnoreCase(documentType, PartyIdentificationTypeValues.values());
+  }
+
+  public static PartyTypeValues mapToPartyTypeValue(CustomerTypeValues customerType) {
+    return mapEnumByToStringIgnoreCase(customerType, PartyTypeValues.values());
+  }
+
+  public static ResidencyStatusTypeValues mapToResidencyStatusTypeValue(
+      ResidencyStatusValues residencyStatus) {
+    return mapEnumByToStringIgnoreCase(residencyStatus, ResidencyStatusTypeValues.values());
+  }
+
+  public static PartyReferenceSortFieldValues mapToPartyReferenceSortFieldValue(
+      CustomerSortFieldValues sortField) {
+    if (sortField == null) {
+      return null;
+    }
+    switch (sortField) {
+      case DOCUMENT_NUMBER:
+        return PartyReferenceSortFieldValues.IDENTIFIER_VALUE;
+      case CUSTOMER_TYPE:
+        return PartyReferenceSortFieldValues.PARTY_TYPE;
+      case RESIDENCY_STATUS:
+        return PartyReferenceSortFieldValues.RESIDENCY_STATUS;
+      default:
+        return null;
+    }
+  }
+
+  public static SortDirectionValues mapToSortDirectionValue(SortDirectionUxValues sortDirection) {
+    return mapEnumByToStringIgnoreCase(sortDirection, SortDirectionValues.values());
   }
 
   private static <S extends Enum<S>, T extends Enum<T>> T mapEnumByToStringIgnoreCase(
