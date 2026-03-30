@@ -5,9 +5,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.ironman.customer.application.context.RequestContext;
 import org.ironman.customer.application.integration.partyreference.PartyReferenceClient;
 import org.ironman.customer.application.integration.partyreference.model.*;
-import org.ironman.customer.application.integration.partyreference.model.PartyReferenceFilter;
 import org.ironman.customer.application.integration.partyreference.restclient.PartyReferenceDataDirectoryProxy;
 
 @Slf4j
@@ -16,23 +16,22 @@ import org.ironman.customer.application.integration.partyreference.restclient.Pa
 public class PartyReferenceClientImpl implements PartyReferenceClient {
 
   @RestClient private final PartyReferenceDataDirectoryProxy partyReferenceDataDirectoryProxy;
+  private final RequestContext requestContext;
 
   @Override
   public Optional<RetrievePartyReferenceDataDirectoryEntryResponse>
-      retrievePartyReferenceDataDirectoryEntry(
-          String requestId, Long partyReferenceDataDirectoryEntryId) {
+      retrievePartyReferenceDataDirectoryEntry(Long partyReferenceDataDirectoryEntryId) {
     var result =
         partyReferenceDataDirectoryProxy.retrievePartyReferenceDataDirectoryEntry(
-            requestId, partyReferenceDataDirectoryEntryId);
-
+            requestContext.getRequestId(), partyReferenceDataDirectoryEntryId);
     return Optional.ofNullable(result);
   }
 
   @Override
   public RetrievePartyReferenceDataDirectoryEntryListResponse
-      retrievePartyReferenceDataDirectoryEntries(String requestId, PartyReferenceFilter filter) {
+      retrievePartyReferenceDataDirectoryEntries(PartyReferenceFilter filter) {
     return partyReferenceDataDirectoryProxy.retrievePartyReferenceDataDirectoryEntries(
-        requestId,
+        requestContext.getRequestId(),
         filter.pageNumber(),
         filter.pageSize(),
         filter.identifierValue(),
@@ -44,17 +43,16 @@ public class PartyReferenceClientImpl implements PartyReferenceClient {
 
   @Override
   public RegisterPartyReferenceDataDirectoryEntryResponse registerPartyReferenceDataDirectoryEntry(
-      String requestId, RegisterPartyReferenceDataDirectoryEntryRequest request) {
+      RegisterPartyReferenceDataDirectoryEntryRequest request) {
     return partyReferenceDataDirectoryProxy.registerPartyReferenceDataDirectoryEntry(
-        requestId, request);
+        requestContext.getRequestId(), request);
   }
 
   @Override
   public RegisterPartyReferenceDataDirectoryEntryResponse updatePartyReferenceDataDirectoryEntry(
-      String requestId,
       Long partyReferenceDataDirectoryEntryId,
       RegisterPartyReferenceDataDirectoryEntryRequest request) {
     return partyReferenceDataDirectoryProxy.updatePartyReferenceDataDirectoryEntry(
-        requestId, partyReferenceDataDirectoryEntryId, request);
+        requestContext.getRequestId(), partyReferenceDataDirectoryEntryId, request);
   }
 }

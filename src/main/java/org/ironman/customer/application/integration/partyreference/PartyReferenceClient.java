@@ -5,17 +5,15 @@ import org.ironman.customer.application.integration.partyreference.model.*;
 
 public interface PartyReferenceClient {
   Optional<RetrievePartyReferenceDataDirectoryEntryResponse>
-      retrievePartyReferenceDataDirectoryEntry(
-          String requestId, Long partyReferenceDataDirectoryEntryId);
+      retrievePartyReferenceDataDirectoryEntry(Long partyReferenceDataDirectoryEntryId);
 
   RetrievePartyReferenceDataDirectoryEntryListResponse retrievePartyReferenceDataDirectoryEntries(
-      String requestId, PartyReferenceFilter filter);
+      PartyReferenceFilter filter);
 
   RegisterPartyReferenceDataDirectoryEntryResponse registerPartyReferenceDataDirectoryEntry(
-      String requestId, RegisterPartyReferenceDataDirectoryEntryRequest request);
+      RegisterPartyReferenceDataDirectoryEntryRequest request);
 
   RegisterPartyReferenceDataDirectoryEntryResponse updatePartyReferenceDataDirectoryEntry(
-      String requestId,
       Long partyReferenceDataDirectoryEntryId,
       RegisterPartyReferenceDataDirectoryEntryRequest request);
 }

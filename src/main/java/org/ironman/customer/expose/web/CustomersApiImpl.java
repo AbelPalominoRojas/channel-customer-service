@@ -5,7 +5,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.ironman.customer.application.business.CustomerService;
 import org.ironman.customer.application.model.api.*;
-import org.ironman.customer.application.model.api.CustomerFilter;
 
 @RequiredArgsConstructor
 @ApplicationScoped
@@ -15,13 +14,13 @@ public class CustomersApiImpl implements CustomersApi {
 
   @Override
   public Response createCustomer(String requestID, CreateCustomerRequest createCustomerRequest) {
-    var result = customerService.createCustomer(requestID, createCustomerRequest);
+    var result = customerService.createCustomer(createCustomerRequest);
     return Response.status(Response.Status.CREATED).entity(result).build();
   }
 
   @Override
   public Response getCustomerById(String requestID, Long customerId) {
-    var result = customerService.getCustomerById(requestID, customerId);
+    var result = customerService.getCustomerById(customerId);
 
     if (result.isEmpty()) {
       return Response.noContent().build();
@@ -49,14 +48,14 @@ public class CustomersApiImpl implements CustomersApi {
             residencyStatus,
             sortField,
             sortDirection);
-    var result = customerService.getCustomers(requestID, filter);
+    var result = customerService.getCustomers(filter);
     return Response.ok().entity(result).build();
   }
 
   @Override
   public Response updateCustomer(
       String requestID, Long customerId, CreateCustomerRequest createCustomerRequest) {
-    var result = customerService.updateCustomer(requestID, customerId, createCustomerRequest);
+    var result = customerService.updateCustomer(customerId, createCustomerRequest);
     return Response.ok().entity(result).build();
   }
 }

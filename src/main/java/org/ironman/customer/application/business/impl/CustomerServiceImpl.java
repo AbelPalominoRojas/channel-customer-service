@@ -8,7 +8,6 @@ import org.ironman.customer.application.integration.partyreference.PartyReferenc
 import org.ironman.customer.application.integration.partyreference.model.PartyReferenceFilter;
 import org.ironman.customer.application.mapper.CustomerMapper;
 import org.ironman.customer.application.model.api.*;
-import org.ironman.customer.application.model.api.CustomerFilter;
 import org.ironman.customer.application.util.AppUtils;
 
 @RequiredArgsConstructor
@@ -19,14 +18,14 @@ public class CustomerServiceImpl implements CustomerService {
   private final CustomerMapper customerMapper;
 
   @Override
-  public Optional<CustomerResponse> getCustomerById(String requestId, Long customerId) {
+  public Optional<CustomerResponse> getCustomerById(Long customerId) {
     return partyReferenceClient
-        .retrievePartyReferenceDataDirectoryEntry(requestId, customerId)
+        .retrievePartyReferenceDataDirectoryEntry(customerId)
         .map(customerMapper::toResponse);
   }
 
   @Override
-  public CustomerListResponse getCustomers(String requestId, CustomerFilter filter) {
+  public CustomerListResponse getCustomers(CustomerFilter filter) {
     var partyFilter =
         new PartyReferenceFilter(
             filter.pageNumber(),
@@ -45,28 +44,25 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(AppUtils::mapToSortDirectionValue)
                 .orElse(null));
 
-    var result =
-        partyReferenceClient.retrievePartyReferenceDataDirectoryEntries(requestId, partyFilter);
+    var result = partyReferenceClient.retrievePartyReferenceDataDirectoryEntries(partyFilter);
     return customerMapper.toListResponse(result);
   }
 
   @Override
-  public CustomerIdResponse createCustomer(
-      String requestId, CreateCustomerRequest createCustomerRequest) {
+  public CustomerIdResponse createCustomer(CreateCustomerRequest createCustomerRequest) {
     var partyReferenceRequest = customerMapper.toRequest(createCustomerRequest);
     var result =
-        partyReferenceClient.registerPartyReferenceDataDirectoryEntry(
-            requestId, partyReferenceRequest);
+        partyReferenceClient.registerPartyReferenceDataDirectoryEntry(partyReferenceRequest);
     return customerMapper.toCustomerIdResponse(result);
   }
 
   @Override
   public CustomerIdResponse updateCustomer(
-      String requestId, Long customerId, CreateCustomerRequest createCustomerRequest) {
+      Long customerId, CreateCustomerRequest createCustomerRequest) {
     var partyReferenceRequest = customerMapper.toRequest(createCustomerRequest);
     var result =
         partyReferenceClient.updatePartyReferenceDataDirectoryEntry(
-            requestId, customerId, partyReferenceRequest);
+            customerId, partyReferenceRequest);
     return customerMapper.toCustomerIdResponse(result);
   }
 }

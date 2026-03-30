@@ -5,12 +5,11 @@ import org.ironman.customer.application.model.api.*;
 import org.ironman.customer.application.model.api.CustomerFilter;
 
 public interface CustomerService {
-  Optional<CustomerResponse> getCustomerById(String requestId, Long customerId);
+  Optional<CustomerResponse> getCustomerById(Long customerId);
 
-  CustomerListResponse getCustomers(String requestId, CustomerFilter filter);
+  CustomerListResponse getCustomers(CustomerFilter filter);
 
-  CustomerIdResponse createCustomer(String requestId, CreateCustomerRequest createCustomerRequest);
+  CustomerIdResponse createCustomer(CreateCustomerRequest createCustomerRequest);
 
-  CustomerIdResponse updateCustomer(
-      String requestId, Long customerId, CreateCustomerRequest createCustomerRequest);
+  CustomerIdResponse updateCustomer(Long customerId, CreateCustomerRequest createCustomerRequest);
 }
