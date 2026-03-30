@@ -18,9 +18,5 @@ public class ExceptionConstants {
   public static final String ERROR_TYPE_FUNCTIONAL = "FUNCTIONAL";
   public static final String ERROR_TYPE_TECHNICAL = "TECHNICAL";
 
-  public static final String MESSAGE_INVALID_DATE_FORMAT =
-      "Invalid date format. Please use YYYY-MM-DD format.";
-
   public static final String COMPONENT_CUSTOMER_SERVICE = "customer-service";
-  public static final String COMPONENT_EXTERNAL_SERVICE = "external-service";
 }
